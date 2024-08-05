@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %} Classes {% endblock %}
+{% block content %}
+<form method = "POST" action="/submit-form">
+  <label for="year">Year:</label><br>
+  <input type="text" id="year" name="year" placeholder="ex. 2013"><br>
+
+  <label for="quarter">Quarter:</label><br>
+  <input type="text" id="quarter" name="quarter" placeholder="ex. Fall"><br>
+
+  <label for="ccode1">Course Code 1:</label><br>
+  <input type="text" id="ccode1" name="ccode1" placeholder="ex. 29001"><br>
+
+  <label for="ccode2">Course Code 2:</label><br>
+  <input type="text" id="ccode2" name="ccode2" placeholder="ex. 29001"><br><br>
+
+  <input type="submit" value="Submit">
+</form>
+
+<!--<h3>{{loc1}}</h3>-->
+<!--<h3>{{loc2}}</h3>-->
+
+{% endblock %}
+

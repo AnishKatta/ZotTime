@@ -29,6 +29,8 @@ def submit_form():
 
 
 
+
+
 @app.route("/locate-classroom/<course_classroom>")
 def locate_classroom(course_classroom):
     address = f"{course_classroom}, University of California, Irvine, CA"
@@ -36,6 +38,25 @@ def locate_classroom(course_classroom):
     places_api_obj = requests.get(places_api_url).json()
     place_id = places_api_obj["results"][0]["place_id"]
     return place_id
+
+@app.route("/calculate-results/<place_id_1>/<place_id_2>")
+def calculate_results(place_id_1, place_id_2):
+    distance_matrix_api_url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+    params = {
+        'origins': f'place_id:{place_id_1}',  # Use the variable place_id_1
+        'destinations': f'place_id:{place_id_2}',  # Use the variable place_id_2
+        'mode': 'walking',
+        'key': API_KEY
+    }
+
+    response = requests.get(distance_matrix_api_url, params = params).json()
+    results = []
+    results.append(response["rows"][0]["elements"][0]["duration"]["text"])
+    results.append(response["rows"][0]["elements"][0]["distance"]["text"])
+    return results
+
+
+
 
 
 
