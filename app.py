@@ -3,19 +3,19 @@ import requests
 
 app = Flask(__name__)
 
+API_KEY = "AIzaSyDr0z0C-1w5yxssvIn9_1gJHPmAnY_fMmI"
+
+
 @app.route('/')
 def index():
-    return render_template('classes.html')
+    return render_template('form.html')
 
-@app.route('/get_locations_of_courses/<year>/<quarter>/<ccode1>/<ccode2>')
-def get_locations_of_courses(year, quarter, ccode1, ccode2):
-    course_1_url = f"https://api.peterportal.org/rest/v0/schedule/soc?term={year} {quarter}&sectionCodes={ccode1}"
-    course_2_url = f"https://api.peterportal.org/rest/v0/schedule/soc?term={year} {quarter}&sectionCodes={ccode2}"
-    course_1_info = requests.get(course_1_url).json()
-    course_2_info = requests.get(course_2_url).json()
-    course_1_name = course_1_info['schools'][0]['departments'][0]['courses'][0]['sections'][0]['meetings'][0]['bldg']
-    course_2_name = course_2_info['schools'][0]['departments'][0]['courses'][0]['sections'][0]['meetings'][0]['bldg']
-    return render_template('classes.html', loc1 = course_1_name, loc2 = course_2_name)
+@app.route('/find-classroom/<year>/<quarter>/<ccode>')
+def find_classroom(year, quarter, ccode):
+    peterportal_api_url = f"https://api.peterportal.org/rest/v0/schedule/soc?term={year} {quarter}&sectionCodes={ccode}"
+    course_info = requests.get(peterportal_api_url).json()
+    course_classroom = course_info['schools'][0]['departments'][0]['courses'][0]['sections'][0]['meetings'][0]['bldg']
+    return course_classroom
 
 
 
@@ -25,8 +25,17 @@ def submit_form():
     quarter = request.form.get('quarter')
     ccode1 = request.form.get('ccode1')
     ccode2 = request.form.get('ccode2')
-    return redirect(url_for('get_locations_of_courses', year = year, quarter = quarter, ccode1 = ccode1, ccode2 = ccode2))
 
+
+
+
+@app.route("/locate-classroom/<course_classroom>")
+def locate_classroom(course_classroom):
+    address = f"{course_classroom}, University of California, Irvine, CA"
+    places_api_url = f"https://maps.googleapis.com/maps/api/place/textsearch/json?query={address}&key={API_KEY}"
+    places_api_obj = requests.get(places_api_url).json()
+    place_id = places_api_obj["results"][0]["place_id"]
+    return place_id
 
 
 
